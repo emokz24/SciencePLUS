@@ -673,12 +673,12 @@
     }
   }
 
-  function grantStudentAccess(id, name) {
+  async function grantStudentAccess(id, name) {
     currentStudentId = id;
     document.getElementById("student-name").innerText = name;
     document.getElementById("login-section").classList.add("hidden");
     document.getElementById("app-section").classList.remove("hidden");
-    updateStudentProgressBar();
+    await updateStudentProgressBar();
     loadLessons();
   }
 
@@ -690,7 +690,10 @@
     document.getElementById("login-section").classList.remove("hidden");
   }
 
-  function updateStudentProgressBar() {
+  async function updateStudentProgressBar() {
+    const cloudLogs = await apiCall('getProgress');
+    if (cloudLogs && cloudLogs.length > 0) progressLogs = cloudLogs;
+
     const completedCount = progressLogs.filter(p => p.studentId === currentStudentId).length;
     const totalLessons = localLessons.length;
     const percentage = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
@@ -703,6 +706,9 @@
     const lessonsFromCloud = await apiCall('getLessons');
     const lessons = (lessonsFromCloud && lessonsFromCloud.length > 0) ? lessonsFromCloud : localLessons;
     localLessons = lessons;
+
+    const cloudLogs = await apiCall('getProgress');
+    if (cloudLogs && cloudLogs.length > 0) progressLogs = cloudLogs;
 
     let html = "";
     if (lessons && lessons.length > 0) {
@@ -794,7 +800,6 @@
     const scoreStr = `${score}/${currentQuiz.length}`;
     alert(`Quiz Result: You scored ${scoreStr}`);
 
-    const existingIndex = progressLogs.findIndex(p => p.studentId === currentStudentId && p.lessonId === currentLessonId);
     const newLog = {
       studentId: currentStudentId,
       lessonId: currentLessonId,
@@ -803,6 +808,7 @@
       timestamp: new Date().toLocaleString()
     };
 
+    const existingIndex = progressLogs.findIndex(p => p.studentId === currentStudentId && p.lessonId === currentLessonId);
     if (existingIndex > -1) {
       progressLogs[existingIndex] = newLog;
     } else {
@@ -812,7 +818,7 @@
     localStorage.setItem("sp_progress", JSON.stringify(progressLogs));
     await apiCall('saveProgress', { studentId: currentStudentId, lessonId: currentLessonId, score: scoreStr });
 
-    updateStudentProgressBar();
+    await updateStudentProgressBar();
     backToLessons();
     loadLessons();
   }
@@ -934,13 +940,19 @@
     document.getElementById(`tab-${tabName}`).classList.remove("hidden");
   }
 
-  function renderProgressTable() {
+  async function renderProgressTable() {
     let tbody = document.getElementById("progress-table-body");
-    if (progressLogs.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#666;">Fetching live student progress from Google Sheets...</td></tr>`;
+
+    const cloudLogs = await apiCall('getProgress');
+    const logsToDisplay = (cloudLogs && cloudLogs.length > 0) ? cloudLogs : progressLogs;
+
+    if (!logsToDisplay || logsToDisplay.length === 0) {
       tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999;">No student scores recorded yet.</td></tr>`;
       return;
     }
-    tbody.innerHTML = progressLogs.map(p => `
+
+    tbody.innerHTML = logsToDisplay.map(p => `
       <tr>
         <td><b>${p.studentId}</b></td>
         <td>${p.lessonId}</td>
