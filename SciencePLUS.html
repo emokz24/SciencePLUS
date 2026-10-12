@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science PLUS - Grade 10 Catch-Up Portal</title>
+  <style>
+    :root {
+      --primary: #0056b3;
+      --primary-gradient: linear-gradient(135deg, #0056b3 0%, #0088ff 100%);
+      --accent: #ffc107;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --text-muted: #6c757d;
+      --danger: #dc3545;
+      --success: #28a745;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 30px 20px;
+      color: var(--text);
+      min-height: 100vh;
+      box-sizing: border-box;
+      position: relative;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #0b1d3a 0%, #020b18 100%);
+    }
+
+    /* ANIMATED CANVAS BACKGROUND FOR SCIENCE ICONS */
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+
+    /* BOLD HEADER DESIGN */
+    .header {
+      background: linear-gradient(135deg, #004085 0%, #0069d9 100%);
+      color: white;
+      padding: 40px;
+      text-align: left;
+    }
+
+    .header h1 {
+      margin: 0 0 10px 0;
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    .badge {
+      background: var(--accent);
+      color: #000;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      text-shadow: none;
+    }
+
+    .subtitle {
+      margin: 0;
+      opacity: 0.95;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    .content-body {
+      padding: 35px;
+    }
+
+    .hidden { display: none !important; }
+
+    input[type="text"], input[type="password"], select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 8px 0 16px 0;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 15px;
+      transition: border 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    button {
+      background: var(--primary-gradient);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: transform 0.1s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    button:hover {
+      box-shadow: 0 4px 12px rgba(0,86,179,0.3);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+      width: auto;
+      margin: 2px;
+    }
+
+    .lesson-card {
+      border: 1px solid #eef2f7;
+      padding: 20px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      background: #fdfdfd;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    .star-rating {
+      font-size: 36px;
+      cursor: pointer;
+      color: #ddd;
+      user-select: none;
+      margin: 10px 0;
+    }
+
+    .star-rating .star.selected { color: var(--accent); }
+
+    .quiz-card {
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 18px;
+      margin: 16px 0;
+      border-radius: 6px;
+    }
+
+    .quiz-option {
+      display: block;
+      margin: 10px 0;
+      cursor: pointer;
+    }
+
+    .admin-panel {
+      background: #fff;
+      border: 2px solid #e0e8f5;
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 25px;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid #eef2f7;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 3px solid transparent;
+      border-radius: 0;
+      width: auto;
+      padding: 8px 16px;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #eef2f7;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #f8fafc;
+      color: var(--text-muted);
+    }
+
+    /* PROGRESS BAR STYLING */
+    .progress-container {
+      background: #eef2f7;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 18px;
+      margin: 12px 0 20px 0;
+    }
+
+    .progress-bar {
+      background: var(--primary-gradient);
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .status-completed { background: #d4edda; color: #155724; }
+    .status-pending { background: #fff3cd; color: #856404; }
+
+    /* FOOTER ADMIN ACCESS LINK */
+    .footer-admin {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #eef2f7;
+      text-align: center;
+    }
+
+    .footer-admin-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      width: auto;
+      padding: 5px 10px;
+    }
+
+    .footer-admin-btn:hover {
+      color: var(--primary);
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ANIMATED CANVAS BACKGROUND FOR SCIENCE ICONS -->
+<canvas id="bg-canvas"></canvas>
+
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-text">
+      <h1 id="app-title-display">Science PLUS <span class="badge" id="app-badge-display">Grade 10</span></h1>
+      <p class="subtitle" id="app-subtitle-display">On-Demand Catch-Up & Practice Portal (Term 2)</p>
+    </div>
+  </div>
+
+  <div class="content-body">
+
+    <!-- STUDENT LOGIN SECTION -->
+    <div id="login-section">
+      <h3>Student Portal Access</h3>
+      <p style="color: var(--text-muted); font-size: 14px;">Enter your enrolled Student ID or LRN below to view your catch-up lessons.</p>
+      <label for="student-id"><b>Student ID / LRN:</b></label>
+      <input type="text" id="student-id" placeholder="e.g. 123456789">
+      <button onclick="login()">Access Lessons</button>
+      <p id="login-msg" style="color:var(--danger); font-weight:bold; margin-top:10px;"></p>
+    </div>
+
+    <!-- MAIN STUDENT APP SECTION -->
+    <div id="app-section" class="hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0;">Welcome back, <span id="student-name" style="color: var(--primary);"></span>!</h2>
+        <!-- STUDENT LOGOUT / CLOSE APP BUTTON -->
+        <button class="btn-secondary btn-sm" onclick="studentLogout()">🚪 Exit App / Log Out</button>
+      </div>
+      
+      <!-- STUDENT AUTOMATED PROGRESS OVERVIEW -->
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:18px; border-radius:12px; margin-bottom:25px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h4 style="margin:0;">📊 My Progress Tracker</h4>
+          <span id="progress-text" style="font-weight:bold; color:var(--primary);">0% Completed</span>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" id="student-progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- LESSON LIST VIEW -->
+      <div id="lesson-list">
+        <h3>Catch-Up Modules</h3>
+        <div id="lessons-container">Loading lessons...</div>
+      </div>
+
+      <!-- LESSON & QUIZ VIEW -->
+      <div id="lesson-view" class="hidden">
+        <button class="btn-secondary" style="width: auto;" onclick="backToLessons()">← Back to Modules</button>
+        <h2 id="lesson-title" style="margin-top:20px;"></h2>
+        <div id="lesson-content"></div>
+        
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+        <h3>Practice Quiz</h3>
+        <div id="quiz-container"></div>
+        <button onclick="submitQuiz()">Submit Quiz Answers</button>
+      </div>
+
+      <!-- RATING SECTION -->
+      <hr style="margin-top:50px; border: none; border-top: 1px solid #eee;">
+      <h3>Rate Science PLUS</h3>
+      <p style="color:var(--text-muted); font-size:14px;">Help us improve this portal for Grade 10 Science learners.</p>
+      <div class="star-rating" id="rating-stars">
+        <span class="star" onclick="setRating(1)">★</span>
+        <span class="star" onclick="setRating(2)">★</span>
+        <span class="star" onclick="setRating(3)">★</span>
+        <span class="star" onclick="setRating(4)">★</span>
+        <span class="star" onclick="setRating(5)">★</span>
+      </div>
+      <textarea id="rating-feedback" rows="3" placeholder="Leave optional suggestions or comments..."></textarea>
+      <button onclick="sendRating()">Submit Rating</button>
+    </div>
+
+    <!-- ADMIN / TEACHER LOGIN MODAL / PANEL -->
+    <div id="admin-modal" class="admin-panel hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;">Administrator & Teacher Dashboard</h2>
+        <button class="btn-secondary" style="width:auto; padding:6px 12px;" onclick="toggleAdminModal()">✕ Close</button>
+      </div>
+
+      <!-- ADMIN AUTH FORM -->
+      <div id="admin-auth-form">
+        <p style="color:var(--text-muted); font-size:14px;">Sign in with credentials to create lessons, quizzes, manage students, and view progress.</p>
+        <label>Username:</label>
+        <input type="text" id="admin-user-input" placeholder="Username (Default: devie)">
+        <label>Password:</label>
+        <input type="password" id="admin-pass-input" placeholder="Password (Default: 0329)">
+        <button onclick="authenticateAdmin()">Sign In as Admin / Teacher</button>
+        <p id="admin-login-msg" style="color:var(--danger); font-weight:bold;"></p>
+      </div>
+
+      <!-- ADMIN CONTROL DASHBOARD -->
+      <div id="admin-dashboard" class="hidden">
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchAdminTab('add-lesson')">➕ Add Lesson & Quiz</button>
+          <button class="tab-btn" onclick="switchAdminTab('track-progress')">📈 Student Progress</button>
+          <button class="tab-btn" onclick="switchAdminTab('students')">Enroll Students</button>
+          <button class="tab-btn" onclick="switchAdminTab('customize')">App Titles</button>
+          <button class="tab-btn" onclick="switchAdminTab('settings')">Security Settings</button>
+        </div>
+
+        <!-- TAB 0: TEACHER ADD LESSON & QUIZ -->
+        <div id="tab-add-lesson">
+          <h3>Create New Catch-Up Lesson</h3>
+          <label>Module Title:</label>
+          <input type="text" id="new-lesson-title" placeholder="e.g. Module 1: Ecosystem Carrying Capacity and Population Growth">
+          
+          <label>Lesson Content / Lecture Notes (HTML or Text):</label>
+          <textarea id="new-lesson-content" rows="4" placeholder="Enter lesson summary, key points, or instructions for students..."></textarea>
+          
+          <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+          <h4>Add Practice Quiz Questions</h4>
+          <div id="quiz-builder-container"></div>
+          <button class="btn-secondary" style="margin-bottom: 15px;" onclick="addQuizQuestionField()">+ Add Quiz Question</button>
+          
+          <button onclick="saveNewLesson()">Save and Publish Lesson Module</button>
+        </div>
+
+        <!-- TAB 1: TEACHER TRACK AUTOMATED STUDENT PROGRESS -->
+        <div id="tab-track-progress" class="hidden">
+          <h3>Automated Student Progress Log</h3>
+          <p style="color:var(--text-muted); font-size:13px;">Quiz scores and completion logs recorded automatically when students complete quizzes.</p>
+          <table>
+            <thead>
+              <tr><th>Student ID</th><th>Module ID</th><th>Quiz Score</th><th>Status</th><th>Timestamp</th></tr>
+            </thead>
+            <tbody id="progress-table-body">
+              <tr><td colspan="5" style="text-align:center; color:#999;">No student scores recorded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TAB 2: ENROLL & MANAGE STUDENTS (WITH EDIT & DELETE) -->
+        <div id="tab-students" class="hidden">
+          <h3 id="enroll-form-heading">Enroll New Student</h3>
+          <input type="hidden" id="edit-student-index" value="-1">
+          <label>Student LRN / ID:</label>
+          <input type="text" id="new-student-id" placeholder="e.g. 102938475">
+          <label>Student Full Name:</label>
+          <input type="text" id="new-student-name" placeholder="e.g. Juan Cruz">
+          <button id="enroll-btn" onclick="enrollStudent()">Enroll Student</button>
+          <button id="cancel-edit-btn" class="btn-secondary hidden" style="margin-top: 8px;" onclick="cancelEditStudent()">Cancel Editing</button>
+
+          <h3 style="margin-top:30px;">Currently Enrolled Students</h3>
+          <table>
+            <thead>
+              <tr><th>LRN / ID</th><th>Name</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="student-table-body">
+              <tr><td colspan="4" style="text-align:center; color:#999;">Loading students...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TAB 3: EDIT APP TITLES & SUBTITLES -->
+        <div id="tab-customize" class="hidden">
+          <h3>Edit Portal Header Titles</h3>
+          <label>App Main Title:</label>
+          <input type="text" id="edit-app-title" placeholder="e.g. Science PLUS">
+          
+          <label>Badge Text:</label>
+          <input type="text" id="edit-app-badge" placeholder="e.g. Grade 10">
+          
+          <label>App Subtitle:</label>
+          <input type="text" id="edit-app-subtitle" placeholder="e.g. On-Demand Catch-Up & Practice Portal (Term 2)">
+          
+          <button onclick="savePortalBranding()">Update Header Titles</button>
+        </div>
+
+        <!-- TAB 4: ADMIN SECURITY SETTINGS -->
+        <div id="tab-settings" class="hidden">
+          <h3>Change Admin Credentials</h3>
+          <label>New Username:</label>
+          <input type="text" id="change-user-input" placeholder="New Username">
+          <label>New Password:</label>
+          <input type="password" id="change-pass-input" placeholder="New Password">
+          <button onclick="updateAdminCredentials()">Save New Credentials</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER WITH ADMIN ACCESS LINK -->
+    <div class="footer-admin">
+      <button class="footer-admin-btn" onclick="toggleAdminModal()">⚙️ Administrator / Teacher Portal Access</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ANIMATED MOVING SCIENCE ICONS BACKGROUND SCRIPT */
+  (function initMovingScienceIcons() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const iconTypes = ['dna', 'cell', 'atom', 'flask', 'leaf'];
+    const particleCount = 28;
+    const particles = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: Math.random() * 20 + 16,
+        type: iconTypes[Math.floor(Math.random() * iconTypes.length)],
+        speedY: -(Math.random() * 0.6 + 0.2),
+        speedX: (Math.random() - 0.5) * 0.4,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.02,
+        opacity: Math.random() * 0.35 + 0.15
+      });
+    }
+
+    function drawIcon(ctx, type, size) {
+      ctx.beginPath();
+      ctx.lineWidth = 1.8;
+
+      if (type === 'atom') {
+        ctx.arc(0, 0, size * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(0, 0, size * 0.5, size * 0.2, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(0, 0, size * 0.5, size * 0.2, Math.PI / 3, 0, Math.PI * 2);
+        ctx.stroke();
+      } 
+      else if (type === 'dna') {
+        for (let i = -size * 0.4; i <= size * 0.4; i += size * 0.2) {
+          ctx.beginPath();
+          ctx.arc(i, Math.sin(i * 0.3) * size * 0.2, size * 0.08, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(i, Math.sin(i * 0.3) * size * 0.2);
+          ctx.lineTo(i, -Math.sin(i * 0.3) * size * 0.2);
+          ctx.stroke();
+        }
+      } 
+      else if (type === 'cell') {
+        ctx.arc(0, 0, size * 0.45, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(size * 0.08, size * 0.08, size * 0.18, 0, Math.PI * 2);
+        ctx.fill();
+      } 
+      else if (type === 'flask') {
+        ctx.moveTo(-size * 0.15, -size * 0.4);
+        ctx.lineTo(size * 0.15, -size * 0.4);
+        ctx.moveTo(0, -size * 0.4);
+        ctx.lineTo(0, -size * 0.15);
+        ctx.lineTo(-size * 0.35, size * 0.35);
+        ctx.lineTo(size * 0.35, size * 0.35);
+        ctx.lineTo(0, -size * 0.15);
+        ctx.stroke();
+      }
+      else {
+        ctx.arc(0, 0, size * 0.35, 0, Math.PI, true);
+        ctx.lineTo(0, -size * 0.35);
+        ctx.stroke();
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      particles.forEach(p => {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.rotation += p.rotSpeed;
+
+        if (p.y < -50) p.y = height + 50;
+        if (p.x < -50) p.x = width + 50;
+        if (p.x > width + 50) p.x = -50;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.strokeStyle = `rgba(0, 180, 255, ${p.opacity})`;
+        ctx.fillStyle = `rgba(0, 200, 255, ${p.opacity})`;
+
+        drawIcon(ctx, p.type, p.size);
+
+        ctx.restore();
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  })();
+
+  /* APPLICATION BACKEND & GOOGLE SHEETS LIVE ENDPOINT */
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1rfY2D-fzkpxk3K90JIFFx0-o9iwq0QYjmuBj0sqVpGhdE9rEzUQvaaoElX74DQ77/exec';
+
+  let adminConfig = {
+    username: localStorage.getItem("sp_admin_user") || "devie",
+    password: localStorage.getItem("sp_admin_pass") || "0329"
+  };
+
+  let brandingConfig = {
+    title: localStorage.getItem("sp_title") || "Science PLUS",
+    badge: localStorage.getItem("sp_badge") || "Grade 10",
+    subtitle: localStorage.getItem("sp_subtitle") || "On-Demand Catch-Up & Practice Portal (Term 2)"
+  };
+
+  let currentStudentId = "";
+  let selectedRating = 0;
+  let currentQuiz = [];
+  let currentLessonId = "";
+
+  // Local fallback state
+  let localLessons = JSON.parse(localStorage.getItem("sp_lessons")) || [
+    {
+      id: "m1",
+      title: "Module 1: Ecosystem Carrying Capacity and Population Growth",
+      content: "Population growth slows down near carrying capacity (K) due to limited food, water, and shelter limits.",
+      quiz: [
+        {
+          question: "What limits population growth as an ecosystem reaches carrying capacity?",
+          options: ["Unlimited space", "Food, water, and shelter limits", "Lack of sunlight", "Decreased competition"],
+          answer: "Food, water, and shelter limits"
+        }
+      ]
+    }
+  ];
+
+  let progressLogs = JSON.parse(localStorage.getItem("sp_progress")) || [];
+  let localStudents = JSON.parse(localStorage.getItem("sp_students")) || [
+    { id: "123456789", name: "Sample Student", status: "Active" },
+    { id: "912", name: "emokz", status: "Active" }
+  ];
+
+  window.onload = function() {
+    applyBrandingUI();
+    addQuizQuestionField();
+  };
+
+  function applyBrandingUI() {
+    document.getElementById("app-badge-display").innerText = brandingConfig.badge;
+    document.getElementById("app-subtitle-display").innerText = brandingConfig.subtitle;
+    
+    const badgeElement = document.getElementById("app-badge-display");
+    document.getElementById("app-title-display").innerText = brandingConfig.title + " ";
+    document.getElementById("app-title-display").appendChild(badgeElement);
+
+    document.getElementById("edit-app-title").value = brandingConfig.title;
+    document.getElementById("edit-app-badge").value = brandingConfig.badge;
+    document.getElementById("edit-app-subtitle").value = brandingConfig.subtitle;
+  }
+
+  function savePortalBranding() {
+    const newTitle = document.getElementById("edit-app-title").value.trim();
+    const newBadge = document.getElementById("edit-app-badge").value.trim();
+    const newSubtitle = document.getElementById("edit-app-subtitle").value.trim();
+
+    if (!newTitle || !newBadge || !newSubtitle) return alert("Please fill in all title fields.");
+
+    brandingConfig.title = newTitle;
+    brandingConfig.badge = newBadge;
+    brandingConfig.subtitle = newSubtitle;
+
+    localStorage.setItem("sp_title", newTitle);
+    localStorage.setItem("sp_badge", newBadge);
+    localStorage.setItem("sp_subtitle", newSubtitle);
+
+    applyBrandingUI();
+    alert("Portal header titles updated successfully!");
+  }
+
+  async function apiCall(action, payload = {}) {
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, ...payload })
+      });
+      return await res.json();
+    } catch (err) {
+      console.warn("Using offline local storage fallback.");
+      return null;
+    }
+  }
+
+  async function login() {
+    const id = document.getElementById("student-id").value.trim();
+    if (!id) return alert("Please enter your Student ID");
+    
+    document.getElementById("login-msg").innerText = "Checking enrollment records...";
+    const res = await apiCall('checkEnrollment', { studentId: id });
+
+    if (res && res.enrolled) {
+      grantStudentAccess(id, res.name);
+    } else {
+      const local = localStudents.find(s => s.id === id);
+      if (local) {
+        grantStudentAccess(id, local.name);
+      } else {
+        document.getElementById("login-msg").innerText = "Access denied. You are not yet enrolled by an Admin or Teacher.";
+      }
+    }
+  }
+
+  function grantStudentAccess(id, name) {
+    currentStudentId = id;
+    document.getElementById("student-name").innerText = name;
+    document.getElementById("login-section").classList.add("hidden");
+    document.getElementById("app-section").classList.remove("hidden");
+    updateStudentProgressBar();
+    loadLessons();
+  }
+
+  /* STUDENT EXIT / LOGOUT */
+  function studentLogout() {
+    currentStudentId = "";
+    document.getElementById("student-id").value = "";
+    document.getElementById("login-msg").innerText = "";
+    document.getElementById("app-section").classList.add("hidden");
+    document.getElementById("login-section").classList.remove("hidden");
+  }
+
+  function updateStudentProgressBar() {
+    const completedCount = progressLogs.filter(p => p.studentId === currentStudentId).length;
+    const totalLessons = localLessons.length;
+    const percentage = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+    document.getElementById("student-progress-bar").style.width = percentage + "%";
+    document.getElementById("progress-text").innerText = `${percentage}% Completed (${completedCount}/${totalLessons} Modules)`;
+  }
+
+  async function loadLessons() {
+    const lessonsFromCloud = await apiCall('getLessons');
+    const lessons = (lessonsFromCloud && lessonsFromCloud.length > 0) ? lessonsFromCloud : localLessons;
+    localLessons = lessons;
+
+    let html = "";
+    if (lessons && lessons.length > 0) {
+      lessons.forEach(l => {
+        const studentProgress = progressLogs.find(p => p.studentId === currentStudentId && p.lessonId === l.id);
+        const statusBadge = studentProgress ? `<span class="status-badge status-completed">Completed (${studentProgress.score})</span>` : `<span class="status-badge status-pending">Pending</span>`;
+
+        html += `
+          <div class="lesson-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h4 style="margin:0 0 10px 0;">${l.title}</h4>
+              ${statusBadge}
+            </div>
+            <button onclick="openLesson('${l.id}', '${encodeURIComponent(l.title)}', '${encodeURIComponent(l.content)}', '${encodeURIComponent(JSON.stringify(l.quiz))}')">Start Lesson & Quiz</button>
+          </div>`;
+      });
+    } else {
+      html = "<p style='color:#666;'>No lesson modules uploaded yet by the teacher.</p>";
+    }
+    document.getElementById("lessons-container").innerHTML = html;
+  }
+
+  /* OPEN LESSON WITH ROBUST STRING DECODING */
+  function openLesson(id, title, content, quizJson) {
+    currentLessonId = id;
+    
+    // Safely decode title and content parameters
+    const decodedTitle = typeof title === 'string' ? decodeURIComponent(title) : title;
+    const decodedContent = typeof content === 'string' ? decodeURIComponent(content) : content;
+    
+    let parsedQuiz = [];
+    try {
+      const decodedQuiz = typeof quizJson === 'string' ? decodeURIComponent(quizJson) : quizJson;
+      parsedQuiz = typeof decodedQuiz === 'string' ? JSON.parse(decodedQuiz) : decodedQuiz;
+    } catch (e) {
+      console.error("Error parsing quiz JSON:", e);
+      parsedQuiz = [];
+    }
+
+    currentQuiz = parsedQuiz;
+
+    document.getElementById("lesson-title").innerText = decodedTitle;
+    document.getElementById("lesson-content").innerHTML = decodedContent;
+    
+    let quizHtml = "";
+    if (currentQuiz && currentQuiz.length > 0) {
+      currentQuiz.forEach((q, idx) => {
+        quizHtml += `<div class="quiz-card">`;
+        quizHtml += `<p><b>Q${idx+1}: ${q.question}</b></p>`;
+        if (q.options && Array.isArray(q.options)) {
+          q.options.forEach(opt => {
+            quizHtml += `<label class="quiz-option"><input type="radio" name="q${idx}" value="${opt}"> ${opt}</label>`;
+          });
+        }
+        quizHtml += `</div>`;
+      });
+    } else {
+      quizHtml = "<p style='color:#666;'>No practice questions attached to this lesson.</p>";
+    }
+    
+    document.getElementById("quiz-container").innerHTML = quizHtml;
+    document.getElementById("lesson-list").classList.add("hidden");
+    document.getElementById("lesson-view").classList.remove("hidden");
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function backToLessons() {
+    document.getElementById("lesson-view").classList.add("hidden");
+    document.getElementById("lesson-list").classList.remove("hidden");
+  }
+
+  async function submitQuiz() {
+    if (currentQuiz.length === 0) return alert("No quiz questions available for this module.");
+    let score = 0;
+    let answered = 0;
+
+    currentQuiz.forEach((q, idx) => {
+      const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+      if (selected) {
+        answered++;
+        if (selected.value === q.answer) score++;
+      }
+    });
+
+    if (answered < currentQuiz.length) {
+      if (!confirm("You haven't answered all questions. Submit anyway?")) return;
+    }
+
+    const scoreStr = `${score}/${currentQuiz.length}`;
+    alert(`Quiz Result: You scored ${scoreStr}`);
+
+    const existingIndex = progressLogs.findIndex(p => p.studentId === currentStudentId && p.lessonId === currentLessonId);
+    const newLog = {
+      studentId: currentStudentId,
+      lessonId: currentLessonId,
+      score: scoreStr,
+      status: "Completed",
+      timestamp: new Date().toLocaleString()
+    };
+
+    if (existingIndex > -1) {
+      progressLogs[existingIndex] = newLog;
+    } else {
+      progressLogs.push(newLog);
+    }
+
+    localStorage.setItem("sp_progress", JSON.stringify(progressLogs));
+    await apiCall('saveProgress', { studentId: currentStudentId, lessonId: currentLessonId, score: scoreStr });
+
+    updateStudentProgressBar();
+    backToLessons();
+    loadLessons();
+  }
+
+  function setRating(val) {
+    selectedRating = val;
+    document.querySelectorAll(".star-rating .star").forEach((s, idx) => {
+      if (idx < val) s.classList.add("selected");
+      else s.classList.remove("selected");
+    });
+  }
+
+  async function sendRating() {
+    if (selectedRating === 0) return alert("Please select a star rating first.");
+    alert("Thank you! Your feedback has been submitted.");
+    document.getElementById("rating-feedback").value = "";
+  }
+
+  /* TEACHER ADD LESSON & QUIZ BUILDER */
+  let questionCount = 0;
+  function addQuizQuestionField() {
+    questionCount++;
+    const container = document.getElementById("quiz-builder-container");
+    const qDiv = document.createElement("div");
+    qDiv.className = "quiz-card";
+    qDiv.id = `q-block-${questionCount}`;
+    qDiv.innerHTML = `
+      <h5>Question ${questionCount}</h5>
+      <input type="text" class="q-title" placeholder="Enter Quiz Question text...">
+      <input type="text" class="q-opt1" placeholder="Option A">
+      <input type="text" class="q-opt2" placeholder="Option B">
+      <input type="text" class="q-opt3" placeholder="Option C">
+      <input type="text" class="q-opt4" placeholder="Option D">
+      <input type="text" class="q-ans" placeholder="Exact Correct Option Text (Answer Key)">
+    `;
+    container.appendChild(qDiv);
+  }
+
+  async function saveNewLesson() {
+    const title = document.getElementById("new-lesson-title").value.trim();
+    const content = document.getElementById("new-lesson-content").value.trim();
+
+    if (!title || !content) return alert("Please fill in both the Lesson Title and Content.");
+
+    let constructedQuiz = [];
+    for (let i = 1; i <= questionCount; i++) {
+      const qBlock = document.getElementById(`q-block-${i}`);
+      if (qBlock) {
+        const qText = qBlock.querySelector(".q-title").value.trim();
+        const opt1 = qBlock.querySelector(".q-opt1").value.trim();
+        const opt2 = qBlock.querySelector(".q-opt2").value.trim();
+        const opt3 = qBlock.querySelector(".q-opt3").value.trim();
+        const opt4 = qBlock.querySelector(".q-opt4").value.trim();
+        const ans = qBlock.querySelector(".q-ans").value.trim();
+
+        if (qText && opt1 && opt2 && ans) {
+          constructedQuiz.push({
+            question: qText,
+            options: [opt1, opt2, opt3, opt4].filter(o => o !== ""),
+            answer: ans
+          });
+        }
+      }
+    }
+
+    const newLesson = {
+      id: "mod_" + Date.now(),
+      title: title,
+      content: content,
+      quiz: constructedQuiz
+    };
+
+    localLessons.push(newLesson);
+    localStorage.setItem("sp_lessons", JSON.stringify(localLessons));
+
+    await apiCall('saveLesson', { lesson: newLesson });
+
+    alert(`Lesson "${title}" successfully published!`);
+
+    document.getElementById("new-lesson-title").value = "";
+    document.getElementById("new-lesson-content").value = "";
+    document.getElementById("quiz-builder-container").innerHTML = "";
+    questionCount = 0;
+    addQuizQuestionField();
+  }
+
+  /* ADMIN / TEACHER PORTAL FUNCTIONS */
+  function toggleAdminModal() {
+    const modal = document.getElementById("admin-modal");
+    modal.classList.toggle("hidden");
+    if (!modal.classList.contains("hidden")) {
+      modal.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  function authenticateAdmin() {
+    const user = document.getElementById("admin-user-input").value.trim();
+    const pass = document.getElementById("admin-pass-input").value.trim();
+
+    if (user === adminConfig.username && pass === adminConfig.password) {
+      document.getElementById("admin-auth-form").classList.add("hidden");
+      document.getElementById("admin-dashboard").classList.remove("hidden");
+      document.getElementById("admin-login-msg").innerText = "";
+      renderProgressTable();
+      renderStudentTable();
+    } else {
+      document.getElementById("admin-login-msg").innerText = "Invalid Admin/Teacher Credentials!";
+    }
+  }
+
+  function switchAdminTab(tabName) {
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+    event.target.classList.add("active");
+
+    document.getElementById("tab-add-lesson").classList.add("hidden");
+    document.getElementById("tab-track-progress").classList.add("hidden");
+    document.getElementById("tab-students").classList.add("hidden");
+    document.getElementById("tab-customize").classList.add("hidden");
+    document.getElementById("tab-settings").classList.add("hidden");
+
+    document.getElementById(`tab-${tabName}`).classList.remove("hidden");
+  }
+
+  function renderProgressTable() {
+    let tbody = document.getElementById("progress-table-body");
+    if (progressLogs.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999;">No student scores recorded yet.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = progressLogs.map(p => `
+      <tr>
+        <td><b>${p.studentId}</b></td>
+        <td>${p.lessonId}</td>
+        <td><b style="color:var(--primary);">${p.score}</b></td>
+        <td><span class="status-badge status-completed">${p.status}</span></td>
+        <td>${p.timestamp}</td>
+      </tr>
+    `).join("");
+  }
+
+  /* ENROLL, EDIT, AND DELETE LEARNERS */
+  async function enrollStudent() {
+    const id = document.getElementById("new-student-id").value.trim();
+    const name = document.getElementById("new-student-name").value.trim();
+    const editIndex = parseInt(document.getElementById("edit-student-index").value);
+
+    if (!id || !name) return alert("Please fill in Student ID and Name.");
+
+    if (editIndex > -1) {
+      localStudents[editIndex] = { id, name, status: "Active" };
+      alert(`Student details updated successfully!`);
+      cancelEditStudent();
+    } else {
+      localStudents.push({ id, name, status: "Active" });
+      await apiCall('enrollStudent', { studentId: id, name: name });
+      alert(`Student ${name} (${id}) enrolled successfully!`);
+    }
+
+    localStorage.setItem("sp_students", JSON.stringify(localStudents));
+    renderStudentTable();
+
+    document.getElementById("new-student-id").value = "";
+    document.getElementById("new-student-name").value = "";
+  }
+
+  function editStudent(index) {
+    const s = localStudents[index];
+    document.getElementById("new-student-id").value = s.id;
+    document.getElementById("new-student-name").value = s.name;
+    document.getElementById("edit-student-index").value = index;
+
+    document.getElementById("enroll-form-heading").innerText = "Edit Student Details";
+    document.getElementById("enroll-btn").innerText = "Save Changes";
+    document.getElementById("cancel-edit-btn").classList.remove("hidden");
+  }
+
+  function cancelEditStudent() {
+    document.getElementById("new-student-id").value = "";
+    document.getElementById("new-student-name").value = "";
+    document.getElementById("edit-student-index").value = "-1";
+
+    document.getElementById("enroll-form-heading").innerText = "Enroll New Student";
+    document.getElementById("enroll-btn").innerText = "Enroll Student";
+    document.getElementById("cancel-edit-btn").classList.add("hidden");
+  }
+
+  function deleteStudent(index) {
+    const s = localStudents[index];
+    if (confirm(`Are you sure you want to remove ${s.name} (${s.id}) from enrolled learners?`)) {
+      localStudents.splice(index, 1);
+      localStorage.setItem("sp_students", JSON.stringify(localStudents));
+      renderStudentTable();
+      alert(`Learner ${s.name} removed.`);
+    }
+  }
+
+  function renderStudentTable() {
+    let tbody = document.getElementById("student-table-body");
+    if (localStudents.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999;">No learners enrolled yet.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = localStudents.map((s, idx) => `
+      <tr>
+        <td><b>${s.id}</b></td>
+        <td>${s.name}</td>
+        <td><span style="color:var(--success); font-weight:bold;">${s.status}</span></td>
+        <td>
+          <button class="btn-secondary btn-sm" onclick="editStudent(${idx})">✏️ Edit</button>
+          <button class="btn-danger btn-sm" onclick="deleteStudent(${idx})">🗑️ Delete</button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function updateAdminCredentials() {
+    const newUser = document.getElementById("change-user-input").value.trim();
+    const newPass = document.getElementById("change-pass-input").value.trim();
+
+    if (!newUser || !newPass) return alert("Please enter both a new username and password.");
+
+    adminConfig.username = newUser;
+    adminConfig.password = newPass;
+
+    localStorage.setItem("sp_admin_user", newUser);
+    localStorage.setItem("sp_admin_pass", newPass);
+
+    alert(`Admin/Teacher credentials updated successfully!\nNew Username: ${newUser}`);
+    document.getElementById("change-user-input").value = "";
+    document.getElementById("change-pass-input").value = "";
+  }
+</script>
+</body>
+</html>
