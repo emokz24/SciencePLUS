@@ -592,7 +592,6 @@
   }
 
   let progressLogs = [];
-  try { progressLogs = JSON.parse(localStorage.getItem("sp_progress")) || []; } catch(e) { progressLogs = []; }
 
   let localStudents = [];
   try {
@@ -674,12 +673,11 @@
   }
 
   async function grantStudentAccess(id, name) {
-    currentStudentId = id;
+    currentStudentId = id.toString().trim().toLowerCase();
     document.getElementById("student-name").innerText = name;
     document.getElementById("login-section").classList.add("hidden");
     document.getElementById("app-section").classList.remove("hidden");
-    await updateStudentProgressBar();
-    loadLessons();
+    await loadLessons();
   }
 
   function studentLogout() {
@@ -691,9 +689,6 @@
   }
 
   async function updateStudentProgressBar() {
-    const cloudLogs = await apiCall('getProgress');
-    if (cloudLogs && cloudLogs.length > 0) progressLogs = cloudLogs;
-
     const completedCount = progressLogs.filter(p => p.studentId === currentStudentId).length;
     const totalLessons = localLessons.length;
     const percentage = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
@@ -708,12 +703,12 @@
     localLessons = lessons;
 
     const cloudLogs = await apiCall('getProgress');
-    if (cloudLogs && cloudLogs.length > 0) progressLogs = cloudLogs;
+    if (cloudLogs && Array.isArray(cloudLogs)) progressLogs = cloudLogs;
 
     let html = "";
     if (lessons && lessons.length > 0) {
       lessons.forEach((l, i) => {
-        const studentProgress = progressLogs.find(p => p.studentId === currentStudentId && p.lessonId === l.id);
+        const studentProgress = progressLogs.find(p => p.studentId === currentStudentId && p.lessonId === l.id.toString().trim());
         const statusBadge = studentProgress ? `<span class="status-badge status-completed">Completed (${studentProgress.score})</span>` : `<span class="status-badge status-pending">Pending</span>`;
 
         html += `
@@ -729,13 +724,14 @@
       html = "<p style='color:#666;'>No lesson modules uploaded yet by the teacher.</p>";
     }
     document.getElementById("lessons-container").innerHTML = html;
+    updateStudentProgressBar();
   }
 
   function triggerOpenLesson(index) {
     const l = localLessons[index];
     if (!l) return alert("Lesson data could not be retrieved.");
     
-    currentLessonId = l.id;
+    currentLessonId = l.id.toString().trim();
     document.getElementById("lesson-title").innerText = l.title || "Module Details";
     document.getElementById("lesson-content").innerHTML = l.content || "<p>No content provided.</p>";
     
@@ -800,27 +796,10 @@
     const scoreStr = `${score}/${currentQuiz.length}`;
     alert(`Quiz Result: You scored ${scoreStr}`);
 
-    const newLog = {
-      studentId: currentStudentId,
-      lessonId: currentLessonId,
-      score: scoreStr,
-      status: "Completed",
-      timestamp: new Date().toLocaleString()
-    };
-
-    const existingIndex = progressLogs.findIndex(p => p.studentId === currentStudentId && p.lessonId === currentLessonId);
-    if (existingIndex > -1) {
-      progressLogs[existingIndex] = newLog;
-    } else {
-      progressLogs.push(newLog);
-    }
-
-    localStorage.setItem("sp_progress", JSON.stringify(progressLogs));
     await apiCall('saveProgress', { studentId: currentStudentId, lessonId: currentLessonId, score: scoreStr });
 
-    await updateStudentProgressBar();
     backToLessons();
-    loadLessons();
+    await loadLessons();
   }
 
   function setRating(val) {
@@ -945,7 +924,7 @@
     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#666;">Fetching live student progress from Google Sheets...</td></tr>`;
 
     const cloudLogs = await apiCall('getProgress');
-    const logsToDisplay = (cloudLogs && cloudLogs.length > 0) ? cloudLogs : progressLogs;
+    const logsToDisplay = (cloudLogs && Array.isArray(cloudLogs) && cloudLogs.length > 0) ? cloudLogs : progressLogs;
 
     if (!logsToDisplay || logsToDisplay.length === 0) {
       tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999;">No student scores recorded yet.</td></tr>`;
