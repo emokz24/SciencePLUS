@@ -28,7 +28,6 @@
       background: linear-gradient(135deg, #0b1d3a 0%, #020b18 100%);
     }
 
-    /* ANIMATED CANVAS BACKGROUND FOR SCIENCE ICONS */
     #bg-canvas {
       position: fixed;
       top: 0;
@@ -50,7 +49,6 @@
       overflow: hidden;
     }
 
-    /* BOLD HEADER DESIGN */
     .header {
       background: linear-gradient(135deg, #004085 0%, #0069d9 100%);
       color: white;
@@ -134,13 +132,8 @@
       transform: scale(0.98);
     }
 
-    .btn-secondary {
-      background: #6c757d;
-    }
-
-    .btn-danger {
-      background: var(--danger);
-    }
+    .btn-secondary { background: #6c757d; }
+    .btn-danger { background: var(--danger); }
 
     .btn-sm {
       padding: 6px 12px;
@@ -232,7 +225,6 @@
       color: var(--text-muted);
     }
 
-    /* PROGRESS BAR STYLING */
     .progress-container {
       background: #eef2f7;
       border-radius: 10px;
@@ -258,7 +250,6 @@
     .status-completed { background: #d4edda; color: #155724; }
     .status-pending { background: #fff3cd; color: #856404; }
 
-    /* FOOTER ADMIN ACCESS LINK */
     .footer-admin {
       margin-top: 40px;
       padding-top: 20px;
@@ -286,11 +277,9 @@
 </head>
 <body>
 
-<!-- ANIMATED CANVAS BACKGROUND FOR SCIENCE ICONS -->
 <canvas id="bg-canvas"></canvas>
 
 <div class="container">
-  <!-- HEADER -->
   <div class="header">
     <div class="header-text">
       <h1 id="app-title-display">Science PLUS <span class="badge" id="app-badge-display">Grade 10</span></h1>
@@ -314,11 +303,9 @@
     <div id="app-section" class="hidden">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2 style="margin: 0;">Welcome back, <span id="student-name" style="color: var(--primary);"></span>!</h2>
-        <!-- STUDENT LOGOUT / CLOSE APP BUTTON -->
         <button class="btn-secondary btn-sm" onclick="studentLogout()">🚪 Exit App / Log Out</button>
       </div>
       
-      <!-- STUDENT AUTOMATED PROGRESS OVERVIEW -->
       <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:18px; border-radius:12px; margin-bottom:25px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h4 style="margin:0;">📊 My Progress Tracker</h4>
@@ -369,7 +356,6 @@
         <button class="btn-secondary" style="width:auto; padding:6px 12px;" onclick="toggleAdminModal()">✕ Close</button>
       </div>
 
-      <!-- ADMIN AUTH FORM -->
       <div id="admin-auth-form">
         <p style="color:var(--text-muted); font-size:14px;">Sign in with credentials to create lessons, quizzes, manage students, and view progress.</p>
         <label>Username:</label>
@@ -380,7 +366,6 @@
         <p id="admin-login-msg" style="color:var(--danger); font-weight:bold;"></p>
       </div>
 
-      <!-- ADMIN CONTROL DASHBOARD -->
       <div id="admin-dashboard" class="hidden">
         <div class="tab-bar">
           <button class="tab-btn active" onclick="switchAdminTab('add-lesson')">➕ Add Lesson & Quiz</button>
@@ -390,7 +375,6 @@
           <button class="tab-btn" onclick="switchAdminTab('settings')">Security Settings</button>
         </div>
 
-        <!-- TAB 0: TEACHER ADD LESSON & QUIZ -->
         <div id="tab-add-lesson">
           <h3>Create New Catch-Up Lesson</h3>
           <label>Module Title:</label>
@@ -407,7 +391,6 @@
           <button onclick="saveNewLesson()">Save and Publish Lesson Module</button>
         </div>
 
-        <!-- TAB 1: TEACHER TRACK AUTOMATED STUDENT PROGRESS -->
         <div id="tab-track-progress" class="hidden">
           <h3>Automated Student Progress Log</h3>
           <p style="color:var(--text-muted); font-size:13px;">Quiz scores and completion logs recorded automatically when students complete quizzes.</p>
@@ -421,7 +404,6 @@
           </table>
         </div>
 
-        <!-- TAB 2: ENROLL & MANAGE STUDENTS (WITH EDIT & DELETE) -->
         <div id="tab-students" class="hidden">
           <h3 id="enroll-form-heading">Enroll New Student</h3>
           <input type="hidden" id="edit-student-index" value="-1">
@@ -443,7 +425,6 @@
           </table>
         </div>
 
-        <!-- TAB 3: EDIT APP TITLES & SUBTITLES -->
         <div id="tab-customize" class="hidden">
           <h3>Edit Portal Header Titles</h3>
           <label>App Main Title:</label>
@@ -458,7 +439,6 @@
           <button onclick="savePortalBranding()">Update Header Titles</button>
         </div>
 
-        <!-- TAB 4: ADMIN SECURITY SETTINGS -->
         <div id="tab-settings" class="hidden">
           <h3>Change Admin Credentials</h3>
           <label>New Username:</label>
@@ -470,7 +450,6 @@
       </div>
     </div>
 
-    <!-- FOOTER WITH ADMIN ACCESS LINK -->
     <div class="footer-admin">
       <button class="footer-admin-btn" onclick="toggleAdminModal()">⚙️ Administrator / Teacher Portal Access</button>
     </div>
@@ -479,7 +458,6 @@
 </div>
 
 <script>
-  /* ANIMATED MOVING SCIENCE ICONS BACKGROUND SCRIPT */
   (function initMovingScienceIcons() {
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
@@ -588,7 +566,6 @@
     animate();
   })();
 
-  /* APPLICATION BACKEND & GOOGLE SHEETS LIVE ENDPOINT */
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1rfY2D-fzkpxk3K90JIFFx0-o9iwq0QYjmuBj0sqVpGhdE9rEzUQvaaoElX74DQ77/exec';
 
   let adminConfig = {
@@ -607,27 +584,25 @@
   let currentQuiz = [];
   let currentLessonId = "";
 
-  // Local fallback state
-  let localLessons = JSON.parse(localStorage.getItem("sp_lessons")) || [
-    {
-      id: "m1",
-      title: "Module 1: Ecosystem Carrying Capacity and Population Growth",
-      content: "Population growth slows down near carrying capacity (K) due to limited food, water, and shelter limits.",
-      quiz: [
-        {
-          question: "What limits population growth as an ecosystem reaches carrying capacity?",
-          options: ["Unlimited space", "Food, water, and shelter limits", "Lack of sunlight", "Decreased competition"],
-          answer: "Food, water, and shelter limits"
-        }
-      ]
-    }
-  ];
+  let localLessons = [];
+  try {
+    localLessons = JSON.parse(localStorage.getItem("sp_lessons")) || [];
+  } catch (e) {
+    localLessons = [];
+  }
 
-  let progressLogs = JSON.parse(localStorage.getItem("sp_progress")) || [];
-  let localStudents = JSON.parse(localStorage.getItem("sp_students")) || [
-    { id: "123456789", name: "Sample Student", status: "Active" },
-    { id: "912", name: "emokz", status: "Active" }
-  ];
+  let progressLogs = [];
+  try { progressLogs = JSON.parse(localStorage.getItem("sp_progress")) || []; } catch(e) { progressLogs = []; }
+
+  let localStudents = [];
+  try {
+    localStudents = JSON.parse(localStorage.getItem("sp_students")) || [
+      { id: "123456789", name: "Sample Student", status: "Active" },
+      { id: "dibi", name: "dibi", status: "Active" }
+    ];
+  } catch(e) {
+    localStudents = [{ id: "dibi", name: "dibi", status: "Active" }];
+  }
 
   window.onload = function() {
     applyBrandingUI();
@@ -675,7 +650,6 @@
       });
       return await res.json();
     } catch (err) {
-      console.warn("Using offline local storage fallback.");
       return null;
     }
   }
@@ -690,7 +664,7 @@
     if (res && res.enrolled) {
       grantStudentAccess(id, res.name);
     } else {
-      const local = localStudents.find(s => s.id === id);
+      const local = localStudents.find(s => s.id.toString().toLowerCase() === id.toLowerCase());
       if (local) {
         grantStudentAccess(id, local.name);
       } else {
@@ -708,7 +682,6 @@
     loadLessons();
   }
 
-  /* STUDENT EXIT / LOGOUT */
   function studentLogout() {
     currentStudentId = "";
     document.getElementById("student-id").value = "";
@@ -733,7 +706,7 @@
 
     let html = "";
     if (lessons && lessons.length > 0) {
-      lessons.forEach(l => {
+      lessons.forEach((l, i) => {
         const studentProgress = progressLogs.find(p => p.studentId === currentStudentId && p.lessonId === l.id);
         const statusBadge = studentProgress ? `<span class="status-badge status-completed">Completed (${studentProgress.score})</span>` : `<span class="status-badge status-pending">Pending</span>`;
 
@@ -743,7 +716,7 @@
               <h4 style="margin:0 0 10px 0;">${l.title}</h4>
               ${statusBadge}
             </div>
-            <button onclick="openLesson('${l.id}', '${encodeURIComponent(l.title)}', '${encodeURIComponent(l.content)}', '${encodeURIComponent(JSON.stringify(l.quiz))}')">Start Lesson & Quiz</button>
+            <button onclick="triggerOpenLesson(${i})">Start Lesson & Quiz</button>
           </div>`;
       });
     } else {
@@ -752,28 +725,27 @@
     document.getElementById("lessons-container").innerHTML = html;
   }
 
-  /* OPEN LESSON WITH ROBUST STRING DECODING */
-  function openLesson(id, title, content, quizJson) {
-    currentLessonId = id;
+  function triggerOpenLesson(index) {
+    const l = localLessons[index];
+    if (!l) return alert("Lesson data could not be retrieved.");
     
-    // Safely decode title and content parameters
-    const decodedTitle = typeof title === 'string' ? decodeURIComponent(title) : title;
-    const decodedContent = typeof content === 'string' ? decodeURIComponent(content) : content;
+    currentLessonId = l.id;
+    document.getElementById("lesson-title").innerText = l.title || "Module Details";
+    document.getElementById("lesson-content").innerHTML = l.content || "<p>No content provided.</p>";
     
     let parsedQuiz = [];
-    try {
-      const decodedQuiz = typeof quizJson === 'string' ? decodeURIComponent(quizJson) : quizJson;
-      parsedQuiz = typeof decodedQuiz === 'string' ? JSON.parse(decodedQuiz) : decodedQuiz;
-    } catch (e) {
-      console.error("Error parsing quiz JSON:", e);
-      parsedQuiz = [];
+    if (Array.isArray(l.quiz)) {
+      parsedQuiz = l.quiz;
+    } else if (typeof l.quiz === 'string') {
+      try {
+        parsedQuiz = JSON.parse(l.quiz);
+      } catch (e) {
+        parsedQuiz = [];
+      }
     }
 
     currentQuiz = parsedQuiz;
 
-    document.getElementById("lesson-title").innerText = decodedTitle;
-    document.getElementById("lesson-content").innerHTML = decodedContent;
-    
     let quizHtml = "";
     if (currentQuiz && currentQuiz.length > 0) {
       currentQuiz.forEach((q, idx) => {
@@ -859,7 +831,6 @@
     document.getElementById("rating-feedback").value = "";
   }
 
-  /* TEACHER ADD LESSON & QUIZ BUILDER */
   let questionCount = 0;
   function addQuizQuestionField() {
     questionCount++;
@@ -927,7 +898,6 @@
     addQuizQuestionField();
   }
 
-  /* ADMIN / TEACHER PORTAL FUNCTIONS */
   function toggleAdminModal() {
     const modal = document.getElementById("admin-modal");
     modal.classList.toggle("hidden");
@@ -981,7 +951,6 @@
     `).join("");
   }
 
-  /* ENROLL, EDIT, AND DELETE LEARNERS */
   async function enrollStudent() {
     const id = document.getElementById("new-student-id").value.trim();
     const name = document.getElementById("new-student-name").value.trim();
